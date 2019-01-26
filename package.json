@@ -1,0 +1,9 @@
+{
+	"name": "crud-players",
+	"version": "1.0.0",
+	"description": "A Gatsby/React front-end for a CRUD API",
+	"repository": "git@github.com:zipang/crud-players.git",
+	"author": "zipang <christophe.desguez@gmail.com>",
+	"license": "MIT",
+	"private": true
+}
