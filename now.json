@@ -1,5 +1,6 @@
 {
 	"version": 2,
+	"alias": ["crud-players.now.sh"],
 	"builds": [
 		{
 			"src": "src/api/*/*.js",
@@ -8,8 +9,29 @@
 	],
 	"routes": [
 		{
-			"src": "/api/(.*)",
-			"dest": "src/api/$1"
+			"src": "/api/(?<domain>[^/]*)",
+			"methods": ["POST"],
+			"dest": "src/api/$domain/create.js"
+		},
+		{
+			"src": "/api/(?<domain>[^/]*)/(?<id>[^/]*)",
+			"methods": ["PUT", "PATCH"],
+			"dest": "src/api/$domain/update.js"
+		},
+		{
+			"src": "/api/(?<domain>[^/]*)/(?<id>[^/]*)",
+			"methods": ["DELETE"],
+			"dest": "src/api/$domain/delete.js"
+		},
+		{
+			"src": "/api/(?<domain>[^/]*)/(?<id>[^/]*)",
+			"methods": ["GET"],
+			"dest": "src/api/$domain/read.js"
+		},
+		{
+			"src": "/api/(?<domain>[^/]*)",
+			"methods": ["GET"],
+			"dest": "src/api/$domain/find.js"
 		}
 	]
 }
