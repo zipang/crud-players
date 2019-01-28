@@ -1,0 +1,36 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "todos",
+	"type": "object",
+	"title": "JSON Schema for Todos entries",
+	"required": [
+		"id",
+		"content"
+	],
+	"properties": {
+		"id": {
+			"$id": "#todos/properties/id",
+			"type": "string",
+			"title": "Unique Id",
+			"default": "",
+			"pattern": "^(.*)$"
+		},
+		"content": {
+			"$id": "#todos/properties/content",
+			"type": "string",
+			"title": "The Content",
+			"default": ""
+		}
+	},
+	"examples": [
+		{
+			"id": "lets-do-it",
+			"content": "It's pretty important"
+		},
+		{
+			"id": "groceries",
+			"content": "Bread, butter, eggs and milk"
+		}
+	]
+}
