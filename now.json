@@ -7,6 +7,10 @@
 			"use": "@now/node"
 		}
 	],
+	"env": {
+		"NODE_ENV": "production",
+		"PLAYERS_API_SECRET": "@PLAYERS_API_SECRET"
+	},
 	"routes": [
 		{
 			"src": "/api/(?<domain>[^/]*)",

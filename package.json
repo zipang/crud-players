@@ -5,5 +5,17 @@
 	"repository": "git@github.com:zipang/crud-players.git",
 	"author": "zipang <christophe.desguez@gmail.com>",
 	"license": "MIT",
-	"private": true
+	"private": true,
+	"workspaces": [
+		"packages/*",
+		"src/api"
+	],
+	"devDependencies": {
+		"code": "^5.2.4",
+		"micro-dev": "^3.0.0",
+		"mocha": "^5.2.0"
+	},
+	"scripts": {
+		"test": "mocha '**/*.spec.js'"
+	}
 }
