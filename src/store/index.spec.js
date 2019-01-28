@@ -1,4 +1,4 @@
-const Store = require("./index");
+const StorageFactory = require("./index");
 const StorageError = require("./StorageError");
 const { expect } = require("code");
 
@@ -8,21 +8,18 @@ const someData = {
 };
 
 describe("Universal Data Store", function() {
+	const storeAPI = ["create", "get", "set", "has", "delete", "find", "clear"];
 
-	it("A data store has an universal API", function() {
-		const store = Store.get("todos");
-		expect(store).to.contain([
-			"get",
-			"set",
-			"has",
-			"delete",
-			"find",
-			"clear"
-		]);
+	it(`A data store has an universal API (${storeAPI})`, function() {
+		const store = StorageFactory.get("todos");
+		expect(store).to.contain(storeAPI);
+		storeAPI.forEach(apiMethod => {
+			expect(typeof store[apiMethod]).to.equal("function");
+		});
 	});
 
-	it("Retrieve a store with some pre-initialized data", async function() {
-		const store = Store.get("tests", { data: someData });
+	it("Can retrieve a store with some pre-initialized data", async function() {
+		const store = StorageFactory.get("tests", { data: someData });
 		const dataKeys = Object.keys(someData);
 		dataKeys.forEach(async key => {
 			const retrieved = await store.get(key);
@@ -31,7 +28,8 @@ describe("Universal Data Store", function() {
 	});
 
 	it("Trying to access an unknow adapter will throw a nice message", async function() {
-		const initStore = () => Store.get("tests", { db: "future-db" });
+		const initStore = () =>
+			StorageFactory.get("tests", { db: "future-db" });
 
 		expect(initStore).to.throw(StorageError);
 
@@ -43,6 +41,4 @@ describe("Universal Data Store", function() {
 			expect(msg).to.contain(["tests", "load", "future-db"]);
 		}
 	});
-
-})
-
+});

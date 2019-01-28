@@ -15,6 +15,8 @@ const create = (domain, conf) => {
 		clear: () => map.clear()
 	}
 
+	store.create = store.set;
+
 	if (conf && typeof conf.validate === 'function') {
 		const set = store.set;
 		const validate = conf.validate;
