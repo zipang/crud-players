@@ -1,0 +1,13 @@
+{
+  "name": "faunadb-universal-store",
+  "version": "0.0.0",
+  "description": "universal store adapter for FaunaDB",
+  "main": "index.js",
+  "repository": "https://github.com/zipang/crud-players",
+  "author": "zipang",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "faunadb": "^2.5.2"
+  }
+}
