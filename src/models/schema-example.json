@@ -1,9 +1,9 @@
 {
-	"definitions": {},
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"$id": "todos",
+	"title": "Example of a JSON Schema for Todos entries",
+	"definitions": {},
 	"type": "object",
-	"title": "JSON Schema for Todos entries",
 	"required": [
 		"id",
 		"content"
