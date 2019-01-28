@@ -5,9 +5,11 @@ const { json, send, createError } = require('micro');
  * CREATE A NEW PLAYER
  */
 module.exports = async (req, resp) => {
-	const data = await json(req);
 
 	try {
+		// Get the POST body
+		const data = await json(req);
+
 		// Store the new item in the key-value store
 		const newPlayer = await store.create(data);
 
