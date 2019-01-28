@@ -10,15 +10,15 @@ Some configuration details doesn't belong to the git repository, like our databa
 They can been stored inside `now` as secrets like this : 
 
 ```sh
-now secret add PLAYERS_API_SECRET XXXXXXXXXXXXXXXX
+now secrets add PLAYERS_API_SECRET XXXXXXXXXXXXXXXX
 ```
 
-Then, we can make them available as environment variables inside the deployed production lambdas, by adding them to `now.json` in a special `env` section :
+Then, we can make them available as environment variables inside the deployed production lambdas, by adding them to `now.json` in a special `env` section : (note that the reference to the variable name must be lowercased)
 
 ```json
 	"env": {
 		"NODE_ENV": "production",
-		"PLAYERS_API_SECRET": "@PLAYERS_API_SECRET"
+		"PLAYERS_API_SECRET": "@players_api_secret"
 	},
 ```
 
