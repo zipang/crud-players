@@ -6,7 +6,7 @@ The APIs provided by the various libraries encapsulating these services are real
 
 The intent of this project is to provide a simple abstraction layer and a clean and minimal API to access _any_ data storage service :
 
-```
+```js
 // create
 await store.add(newData);
 // read
