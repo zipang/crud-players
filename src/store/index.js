@@ -4,12 +4,12 @@ const DEFAULT_STORE = {
 };
 const stores = {};
 
-/**
- * Retrieves (and create if needed) a datastore for the given domain
- * @param {String} domain - name of the collection/model
- * @param {Object} conf - a configuration object specific to every store implementation
- */
-const Store = {
+const StoreFactory = {
+	/**
+	 * Retrieves (and create if needed) a datastore for the given domain
+	 * @param {String} domain - name of the collection/model
+	 * @param {Object} conf - a configuration object specific to every store implementation
+	 */
 	get: (domain, conf) => {
 
 		let store = stores[domain]; // access loaded stores
@@ -31,4 +31,5 @@ const Store = {
 	}
 }
 
-module.exports = Store;
+module.exports = StoreFactory;
+

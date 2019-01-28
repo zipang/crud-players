@@ -1,0 +1,23 @@
+{
+	"name": "universal-store",
+	"version": "0.1.0",
+	"description": "Simple and minimal API to any data store service",
+	"main": "index.js",
+	"repository": "https://github.com/zipang/crud-players",
+	"author": "zipang",
+	"license": "MIT",
+	"private": false,
+	"esdoc": {
+		"source": "./",
+		"destination": "./docs",
+		"excludes": ["node_modules", "\\.spec\\.js$"],
+		"plugins": [
+			{
+				"name": "esdoc-standard-plugin"
+			}
+		]
+	},
+	"devDependencies": {
+		"esdoc-standard-plugin": "^1.0.0"
+	}
+}

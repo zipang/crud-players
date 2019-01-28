@@ -1,10 +1,16 @@
 const faunadb = require("faunadb");
 const StorageError = require("../StorageError");
 
+const FIND_OPTIONS = {
+	size: 50,
+	page: 0
+}
+
 /**
- * Retrieves a new FaunaDB data store for a specific domain
- * @param {String} domain - Usually the collection or view name
- * @param {Object} conf - a specific configuration object
+ * Store factory
+ * Retrieves a new FaunaDB data store for a specific domain ()
+ * @param {String} domain - Usually the collection name, in FaunaDb : the class
+ * @param {Object} conf - configuration object to connect to the database
  * @return {Store}
  */
 const create = (domain, conf) => {
@@ -118,11 +124,15 @@ const create = (domain, conf) => {
 		},
 		/**
 		 * Retrieves a list of elements from the store
-		 * @param {Function} flt - a filter function
-		 * @param {Object} pagination - the size of pages and the number of the page to retrieve
+		 * @param {Function} flt - an optional filter function
+		 * @param {Object} options - More options like
+		 *   - {Number} size - the size of pages
+		 *   - {Number} page - the number of the page to retrieve
+		 *   - {Function} sortBy -
+		 *   - {Array} fields - the name of the fields to retrieve
 		 * @return {Array}
 		 */
-		find: async flt => {
+		find: async (flt, options) => {
 			const page = await client.query(
 				q.Map(
 					q.Paginate(q.Match(q.Ref(`indexes/all_${domain}`)), {
