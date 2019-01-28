@@ -46,6 +46,7 @@ const create = (domain, conf) => {
 		/**
 		 * Append a new element to the store
 		 * @param {Object} data
+		 * @return {Object} the updated element with the generated `id`
 		 */
 		add: async data => {
 			try {
@@ -58,15 +59,28 @@ const create = (domain, conf) => {
 				throw new StorageError(domain, "create", data, err);
 			}
 		},
+		/**
+		 * Replace an existing element in the store
+		 * @param {String} key
+		 * @param {Object} data
+		 * @return {Object} the updated element
+		 */
 		set: async (key, data) => {
 			try {
 				return await client.query(
-					q.Select("data", q.Replace(q.Ref(`classes/${domain}/${key}`), { data }))
+					q.Select(
+						"data",
+						q.Replace(q.Ref(`classes/${domain}/${key}`), { data })
+					)
 				);
 			} catch (err) {
 				throw new StorageError(domain, "update", data, err);
 			}
 		},
+		/**
+		 * Retrieve an element from the store
+		 * @param {String} key
+		 */
 		get: async key => {
 			try {
 				return await client.query(
@@ -76,6 +90,10 @@ const create = (domain, conf) => {
 				throw new StorageError(domain, "get", key, err);
 			}
 		},
+		/**
+		 * Test the existence of an element in the store
+		 * @param {String} key
+		 */
 		has: async key => {
 			try {
 				return await client.query(
@@ -85,6 +103,10 @@ const create = (domain, conf) => {
 				throw new StorageError(domain, "has", key, err);
 			}
 		},
+		/**
+		 * Delete an element from the store
+		 * @param {String} key
+		 */
 		delete: async key => {
 			try {
 				const result = await client.query(
@@ -94,30 +116,40 @@ const create = (domain, conf) => {
 				throw new StorageError(domain, "delete", key, err);
 			}
 		},
+		/**
+		 * Retrieves a list of elements from the store
+		 * @param {Function} flt - a filter function
+		 * @param {Object} pagination - the size of pages and the number of the page to retrieve
+		 * @return {Array}
+		 */
 		find: async flt => {
-			const result = await client.query(
-				q.Paginate(q.Match(q.Ref(`indexes/all_${domain}`)))
+			const page = await client.query(
+				q.Map(
+					q.Paginate(q.Match(q.Ref(`indexes/all_${domain}`)), {
+						size: 20,
+						after: 1
+					}),
+					ref => [q.Select("id", ref), q.Select("data", q.Get(ref))]
+				)
 			);
-			return result.filter(flt);
+			// Rebuild the full id+data representation
+			const data = page.data.map(elt =>
+				Object.assign({ id: elt[0] }, elt[1])
+			);
+			return typeof flt === "function" ? data.filter(flt) : data;
 		},
 		clear: async () => {
 			const client = await getClient();
 		},
 		teardrop: async () => {
 			try {
-				await client.query(
-					q.Delete(q.Ref(`indexes/all_${domain}`))
-				);
-			} catch (err) { }
+				await client.query(q.Delete(q.Ref(`indexes/all_${domain}`)));
+			} catch (err) {}
 			try {
-				await client.query(
-					q.Delete(q.Ref(`indexes/${domain}_by_id`))
-				);
-			} catch (err) { }
+				await client.query(q.Delete(q.Ref(`indexes/${domain}_by_id`)));
+			} catch (err) {}
 			try {
-				await client.query(
-					q.Delete(q.Ref(`classes/${domain}`))
-				);
+				await client.query(q.Delete(q.Ref(`classes/${domain}`)));
 			} catch (err) {}
 		}
 	};
