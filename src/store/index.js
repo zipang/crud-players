@@ -24,7 +24,7 @@ const Store = {
 			} catch (err) {
 				throw new Error(`${store.db} data store is unknown`);
 			}
-			stores[domain] = store = storeFactory.create(domain, store[conf]);
+			stores[domain] = store = storeFactory.create(domain, conf);
 		}
 
 		return store;
