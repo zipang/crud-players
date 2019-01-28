@@ -37,6 +37,21 @@ const StoreFactory = {
    */
   get: (domain, conf) {}
 }
+
+// Basic usage
+// 1. Without any param, the returned store adapter will be an in-memory store, 
+// ideal for tests purposes
+const dbStore = StoreFactory.get("players");
+// 2. Choose an adapter by providing its specific configuration object
+const mongodbStore = StoreFactory.get("players", {
+  db: "mongodb", conf: { connect: "mongodb://localhost:27017/test_db" }
+});
+// 3. Roadmap (not yet implemented) : Get multiple parallel storage services
+const hyperStore = StoreFactory.get("players", [
+  { db: "lokijs", primary: true, conf: { autoload: true },
+  { db: "mongodb", conf: { connect: "mongodb://localhost:27017/test_db" },
+]);
+
 ```
 
 ## Store API
