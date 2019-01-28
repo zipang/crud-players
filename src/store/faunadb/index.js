@@ -4,7 +4,7 @@ const StorageError = require("../StorageError");
 const FIND_OPTIONS = {
 	size: 50,
 	page: 0
-}
+};
 
 /**
  * Store factory
@@ -125,20 +125,18 @@ const create = (domain, conf) => {
 		/**
 		 * Retrieves a list of elements from the store
 		 * @param {Function} flt - an optional filter function
-		 * @param {Object} options - More options like
+		 * @param {Object} opts - More options like
 		 *   - {Number} size - the size of pages
 		 *   - {Number} page - the number of the page to retrieve
 		 *   - {Function} sortBy -
 		 *   - {Array} fields - the name of the fields to retrieve
 		 * @return {Array}
 		 */
-		find: async (flt, options) => {
+		find: async (flt, opts) => {
+			const options = Object.assign({}, FIND_OPTIONS, opts);
 			const page = await client.query(
 				q.Map(
-					q.Paginate(q.Match(q.Ref(`indexes/all_${domain}`)), {
-						size: 20,
-						after: 1
-					}),
+					q.Paginate(q.Match(q.Ref(`indexes/all_${domain}`)), options),
 					ref => [q.Select("id", ref), q.Select("data", q.Get(ref))]
 				)
 			);
@@ -146,7 +144,7 @@ const create = (domain, conf) => {
 			const data = page.data.map(elt =>
 				Object.assign({ id: elt[0] }, elt[1])
 			);
-			return typeof flt === "function" ? data.filter(flt) : data;
+			return (typeof flt === "function") ? data.filter(flt) : data;
 		},
 		clear: async () => {
 			const client = await getClient();
