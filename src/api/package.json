@@ -1,0 +1,16 @@
+{
+  "name": "crud-players-api",
+  "version": "0.0.0",
+  "description": "CRUD Players API workspace (using Yarn workspaces)",
+  "main": "index.js",
+  "repository": "https://github.com/zipang/crud-players.git",
+  "author": "zipang",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "micro": "^9.3.3"
+  },
+  "devDependencies": {
+    "test-listen": "^1.1.0"
+  }
+}
