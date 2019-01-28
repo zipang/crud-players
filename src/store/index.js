@@ -2,7 +2,7 @@ const DEFAULT_STORE = {
 	db: 'in-memory',
 	conf: {}
 };
-const stores = {};
+const StorageError = require("./StorageError");
 
 const StoreFactory = {
 	/**
@@ -12,22 +12,20 @@ const StoreFactory = {
 	 */
 	get: (domain, conf) => {
 
-		let store = stores[domain]; // access loaded stores
-
-		if (!store) {
-			// We'll have to create one
-			store = Object.assign({}, DEFAULT_STORE, conf);
-			// Load the store factory
-			let storeFactory;
-			try {
-				storeFactory = require(`./${store.db}`);
-			} catch (err) {
-				throw new Error(`${store.db} data store is unknown`);
-			}
-			stores[domain] = store = storeFactory.create(domain, conf);
+		// We'll have to create one
+		store = Object.assign({}, DEFAULT_STORE, conf);
+		// Load the store factory
+		let storeAdapter;
+		try {
+			storeAdapter = require(`./${store.db}`);
+		} catch (err) {
+			throw new StorageError(domain, "load", null, `${store.db} data store is unknown`);
 		}
-
-		return store;
+		try {
+			return storeAdapter.create(domain, conf);
+		} catch (err) {
+			throw new StorageError(domain, "init", null, `Initialisation of the ${store.db} data store failed : ${err.message}`);
+		}
 	}
 }
 

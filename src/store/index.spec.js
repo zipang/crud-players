@@ -1,4 +1,5 @@
 const Store = require("./index");
+const StorageError = require("./StorageError");
 const { expect } = require("code");
 
 const someData = {
@@ -28,5 +29,20 @@ describe("Universal Data Store", function() {
 			expect(retrieved).to.equal(someData[key]);
 		});
 	});
+
+	it("Trying to access an unknow adapter will throw a nice message", async function() {
+		const initStore = () => Store.get("tests", { db: "future-db" });
+
+		expect(initStore).to.throw(StorageError);
+
+		try {
+			initStore();
+		} catch (err) {
+			const msg = err.message;
+			console.log(msg);
+			expect(msg).to.contain(["tests", "load", "future-db"]);
+		}
+	});
+
 })
 
