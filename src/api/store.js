@@ -1,5 +1,6 @@
 
-const Store = require("../store");
+const FaunaDbStore = require("../store/faunadb");
+const InmemoryDbStore = require("../store/in-memory");
 const StorageError = require("../store/StorageError");
 
 /**
@@ -8,13 +9,10 @@ const StorageError = require("../store/StorageError");
 module.exports = (collectionName) => {
 	if (!process.env.PLAYERS_API_SECRET) {
 		console.log(`Delivering an in-memory data store for ${collectionName}`)
-		return Store.get(collectionName);
+		return InmemoryDbStore.create(collectionName);
 	} else {
-		return Store.get(collectionName, {
-			db: "faunadb",
-			faunadb: {
-				secret: process.env.PLAYERS_API_SECRET
-			}
+		return FaunaDbStore.create(collectionName, {
+			secret: process.env.PLAYERS_API_SECRET
 		});
 	}
 };
