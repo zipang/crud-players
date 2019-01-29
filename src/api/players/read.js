@@ -1,20 +1,22 @@
 const store = require("../store")("players");
 const { send, createError, sendError } = require('micro');
+const parseUrl = require("url").parse;
 
 /**
  * RETRIEVE A SINGLE PLAYER
  */
 module.exports = async (req, resp) => {
 
-	const playerId = new URL(req.url).pathname.split("/").pop();
+	let playerId;
 
 	try {
+		playerId = parseUrl(req.url).pathname.split("/").pop();
 
 		// Retrieve the Player by its key
 		const player = await store.get(playerId);
 
 		if (!player) {
-			send(resp, 404, `Player ${playerId} was not found`);
+			send(resp, 404, `Player #${playerId} was not found`);
 		} else {
 			return player;
 		}

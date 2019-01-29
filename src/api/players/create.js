@@ -1,5 +1,5 @@
 const store = require("../store")("players");
-const { json, send, createError } = require('micro');
+const { json, send, sendError, createError } = require('micro');
 
 /**
  * CREATE A NEW PLAYER
