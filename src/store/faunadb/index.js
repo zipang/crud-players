@@ -2,8 +2,7 @@ const faunadb = require("faunadb");
 const StorageError = require("../StorageError");
 
 const FIND_OPTIONS = {
-	size: 50,
-	page: 0
+	size: 50
 };
 
 /**

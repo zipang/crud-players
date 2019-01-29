@@ -5,6 +5,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# System trash
+.DS_Store
+._*
+
 # Runtime data
 pids
 *.pid
