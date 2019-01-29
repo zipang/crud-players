@@ -8,7 +8,8 @@
 	"private": true,
 	"workspaces": [
 		"packages/*",
-		"src/api"
+		"src/api",
+		"src/store"
 	],
 	"devDependencies": {
 		"code": "^5.2.4",
@@ -16,6 +17,7 @@
 		"mocha": "^5.2.0"
 	},
 	"scripts": {
-		"test": "mocha '**/*.spec.js'"
+		"test": "mocha '**/*.spec.js'",
+		"dev:api": "micro-dev src/api/players/find.js"
 	}
 }
