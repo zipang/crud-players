@@ -14,6 +14,7 @@ const StoreFactory = {
 
 		// We'll have to create one
 		store = Object.assign({}, DEFAULT_STORE, conf);
+
 		// Load the store factory
 		let storeAdapter;
 		try {

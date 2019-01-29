@@ -2,7 +2,7 @@ const faunadb = require("faunadb");
 const StorageError = require("../StorageError");
 
 const FIND_OPTIONS = {
-	size: 50
+	size: 50,
 };
 
 /**
@@ -32,7 +32,7 @@ const create = (domain, conf) => {
 			await client.query(
 				q.CreateIndex({
 					name: `all_${domain}`,
-					source: q.Class(domain)
+					source: q.Class(domain),
 				})
 			);
 			await client.query(
@@ -42,9 +42,9 @@ const create = (domain, conf) => {
 					unique: true,
 					terms: [
 						{
-							field: ["data", "id"]
-						}
-					]
+							field: ["data", "id"],
+						},
+					],
 				})
 			);
 		},
@@ -53,13 +53,12 @@ const create = (domain, conf) => {
 		 * @param {Object} data
 		 * @return {Object} the updated element with the generated `id`
 		 */
-		add: async data => {
+		create: async (data) => {
 			try {
 				const result = await client.query(
 					q.Create(q.Class(domain), { data })
 				);
-				const created = Object.assign({ id: result.ref.id }, data);
-				return created;
+				return Object.assign({ id: result.ref.id }, data);
 			} catch (err) {
 				throw new StorageError(domain, "create", data, err);
 			}
@@ -79,14 +78,19 @@ const create = (domain, conf) => {
 					)
 				);
 			} catch (err) {
-				throw new StorageError(domain, "update", data, err);
+				if (err.name === "NotFound") {
+					// That's in fact a 404
+					return undefined;
+				} else {
+					throw new StorageError(domain, "update", data, err);
+				}
 			}
 		},
 		/**
 		 * Retrieve an element from the store
 		 * @param {String} key
 		 */
-		get: async key => {
+		get: async (key) => {
 			try {
 				return await client.query(
 					q.Select("data", q.Get(q.Ref(`classes/${domain}/${key}`)))
@@ -104,7 +108,7 @@ const create = (domain, conf) => {
 		 * Test the existence of an element in the store
 		 * @param {String} key
 		 */
-		has: async key => {
+		has: async (key) => {
 			try {
 				return await client.query(
 					q.Exists(q.Ref(`classes/${domain}/${key}`))
@@ -117,7 +121,7 @@ const create = (domain, conf) => {
 		 * Delete an element from the store
 		 * @param {String} key
 		 */
-		delete: async key => {
+		delete: async (key) => {
 			try {
 				const result = await client.query(
 					q.Delete(q.Ref(`classes/${domain}/${key}`))
@@ -137,24 +141,32 @@ const create = (domain, conf) => {
 		 * @return {Array}
 		 */
 		find: async (flt, opts) => {
-			const options = Object.assign({}, FIND_OPTIONS, opts);
-			const page = await client.query(
-				q.Map(
-					q.Paginate(
-						q.Match(q.Ref(`indexes/all_${domain}`)),
-						options
-					),
-					ref => [q.Select("id", ref), q.Select("data", q.Get(ref))]
-				)
-			);
-			// Rebuild the full id+data representation
-			const data = page.data.map(elt =>
-				Object.assign({ id: elt[0] }, elt[1])
-			);
-			return typeof flt === "function" ? data.filter(flt) : data;
+			try {
+				const options = Object.assign({}, FIND_OPTIONS, opts);
+				const page = await client.query(
+					q.Map(
+						q.Paginate(
+							q.Match(q.Ref(`indexes/all_${domain}`)),
+							options
+						),
+						(ref) => [q.Select("id", ref), q.Select("data", q.Get(ref))]
+					)
+				);
+				// Rebuild the full id+data representation
+				const data = page.data.map((elt) =>
+					Object.assign({ id: elt[0] }, elt[1])
+				);
+				return typeof flt === "function" ? data.filter(flt) : data;
+			} catch (err) {
+				throw new StorageError(domain, "find", key, err);
+			}
 		},
 		clear: async () => {
-			const client = await getClient();
+			try {
+				await client.query(q.Delete(q.Ref(`indexes/all_${domain}`)));
+			} catch (err) {
+				throw new StorageError(domain, "clear", key, err);
+			}
 		},
 		teardrop: async () => {
 			try {
@@ -166,7 +178,7 @@ const create = (domain, conf) => {
 			try {
 				await client.query(q.Delete(q.Ref(`classes/${domain}`)));
 			} catch (err) {}
-		}
+		},
 	};
 
 	if (conf && typeof conf.validate === "function") {
@@ -180,7 +192,7 @@ const create = (domain, conf) => {
 
 	if (conf && conf.data) {
 		// Add suplied data
-		Object.keys(conf.data).forEach(key => {
+		Object.keys(conf.data).forEach((key) => {
 			store.set(key, conf.data[key]);
 		});
 	}
