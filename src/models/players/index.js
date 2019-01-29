@@ -1,5 +1,5 @@
-const schema   = require('./schema.json');
-const validate = require('./validate');
+const schema   = require("./schema.json");
+const validate = require("./validate");
 
 /**
  * Players factory
@@ -20,10 +20,10 @@ const create = (data) => {
 			// seems ok
 			obj[prop] = value;
 			return true;
-		}
+		},
 	};
 
 	return new Proxy(data, ValidatingProxy);
-}
+};
 
 module.exports = { create, validate, schema };
