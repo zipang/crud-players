@@ -6,15 +6,14 @@ const StorageError = require("../store/StorageError");
  * Return the store to be used depending of the environment variables
  */
 module.exports = (collectionName) => {
-	if (!process.env.PLAYER_API_SECRET) {
-		throw new Error("No player api secret !");
+	if (!process.env.PLAYERS_API_SECRET) {
 		console.log(`Delivering an in-memory data store for ${collectionName}`)
 		return Store.get(collectionName);
 	} else {
 		return Store.get(collectionName, {
 			db: "faunadb",
 			faunadb: {
-				secret: process.env.PLAYER_API_SECRET
+				secret: process.env.PLAYERS_API_SECRET
 			}
 		});
 	}
