@@ -28,7 +28,7 @@ const validate = (data) => {
 	const errors = [];
 
 	if (typeof data !== 'object' || data === null) {
-		throw new ValidationError('players', data, 'players must be an object');
+		throw new ValidationError('players', data, ['players must be an object']);
 	}
 	// Check the required properties
 	schema.required.forEach(propertyName => {

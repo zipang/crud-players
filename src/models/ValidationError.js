@@ -8,12 +8,9 @@ module.exports = class ValidationError extends TypeError {
 	 * @param  {String|Array} error[s] (multiple error messages can pe passed)
 	 */
 	constructor(modelName, data, errors) {
-		super(`The data does not conform to ${modelName} schema`);
+		super(`${modelName}'s schema validation failed :
+  - ` + errors.join("\n  - "));
 		this.data = data;
-		if (Array.isArray(errors)) {
-			this.errors = errors;
-		} else {
-			this.errors = [errors];
-		}
+		this.errors = errors;
 	}
 }
