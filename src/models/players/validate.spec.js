@@ -4,6 +4,7 @@ const ValidationError = require("../ValidationError");
 const { expect } = require("code");
 
 describe("Data validation", function() {
+
 	it(`Data in the examples section
 	of the JSON schema should validate`, () => {
 		const examples = schema.examples;
