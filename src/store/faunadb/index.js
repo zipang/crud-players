@@ -92,7 +92,12 @@ const create = (domain, conf) => {
 					q.Select("data", q.Get(q.Ref(`classes/${domain}/${key}`)))
 				);
 			} catch (err) {
-				throw new StorageError(domain, "get", key, err);
+				if (err.name === "NotFound") {
+					// That's in fact a 404
+					return undefined;
+				} else {
+					throw new StorageError(domain, "get", key, err);
+				}
 			}
 		},
 		/**
