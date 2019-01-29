@@ -14,11 +14,12 @@
 	"devDependencies": {
 		"code": "^5.2.4",
 		"micro-dev": "^3.0.0",
-		"mocha": "^5.2.0"
+		"mocha": "^5.2.0",
+		"now-env": "^3.1.0"
 	},
 	"scripts": {
 		"test": "mocha '**/*.spec.js'",
-		"dev:api": "micro-dev src/api/players/find.js"
+		"dev:api": "micro-dev src/api/micro-server.js"
 	},
 	"dependencies": {
 		"faunadb": "^2.5.2"
