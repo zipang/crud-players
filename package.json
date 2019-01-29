@@ -19,5 +19,8 @@
 	"scripts": {
 		"test": "mocha '**/*.spec.js'",
 		"dev:api": "micro-dev src/api/players/find.js"
+	},
+	"dependencies": {
+		"faunadb": "^2.5.2"
 	}
 }
