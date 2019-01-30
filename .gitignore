@@ -9,6 +9,9 @@ yarn-error.log*
 .DS_Store
 ._*
 
+# Now.sh environment secrets
+now-secrets.json
+
 # Runtime data
 pids
 *.pid
