@@ -92,9 +92,13 @@ const create = (domain, conf) => {
 		 */
 		get: async (key) => {
 			try {
-				return await client.query(
+				const player = await client.query(
 					q.Select("data", q.Get(q.Ref(`classes/${domain}/${key}`)))
 				);
+				return Object.assign(
+					player,
+					{ id: key }
+				)
 			} catch (err) {
 				if (err.name === "NotFound") {
 					// That's in fact a 404
@@ -123,11 +127,16 @@ const create = (domain, conf) => {
 		 */
 		delete: async (key) => {
 			try {
-				const result = await client.query(
+				return await client.query(
 					q.Delete(q.Ref(`classes/${domain}/${key}`))
 				);
 			} catch (err) {
-				throw new StorageError(domain, "delete", key, err);
+				if (err.name === "NotFound") {
+					// There was nothing to delete
+					return undefined;
+				} else {
+					throw new StorageError(domain, "delete", key, err);
+				}
 			}
 		},
 		/**

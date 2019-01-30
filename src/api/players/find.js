@@ -9,8 +9,7 @@ module.exports = async (req, resp) => {
 	try {
 		// Retrieve the Players
 		const players = await store.find();
-		return players;
-		// send(resp, 200, players);
+		send(resp, 200, players);
 
 	} catch (err) {
 		if (err.statusCode) {
