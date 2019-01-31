@@ -3,8 +3,9 @@ const StorageError = require("./StorageError");
 const { expect } = require("code");
 
 const someData = {
-	notFound: { code: "404", text: "Not Found" },
-	serverError: { code: "500", text: "Server Error" }
+	john: { firstName: "John", lastName: "DOE" },
+	jane: { firstName: "Jane", lastName: "DOE" },
+	herb: { firstName: "Herbert", lastName: "WEST" }
 };
 
 describe("Universal Data Store", function() {

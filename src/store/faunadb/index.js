@@ -199,13 +199,6 @@ const create = (domain, conf) => {
 		};
 	}
 
-	if (conf && conf.data) {
-		// Add suplied data
-		Object.keys(conf.data).forEach((key) => {
-			store.set(key, conf.data[key]);
-		});
-	}
-
 	return store;
 };
 
