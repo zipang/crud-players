@@ -64,19 +64,44 @@ const create = (domain, conf) => {
 			}
 		},
 		/**
-		 * Replace an existing element in the store
+		 * Update some properties of an existing element in the store
 		 * @param {String} key
 		 * @param {Object} data
 		 * @return {Object} the updated element
 		 */
 		set: async (key, data) => {
 			try {
-				return await client.query(
+				const updated = await client.query(
+					q.Select(
+						"data",
+						q.Update(q.Ref(`classes/${domain}/${key}`), { data })
+					)
+				);
+				return Object.assign(updated, { id: key });
+			} catch (err) {
+				if (err.name === "NotFound") {
+					// That's in fact a 404
+					return undefined;
+				} else {
+					throw new StorageError(domain, "update", data, err);
+				}
+			}
+		},
+		/**
+		 * Replace an existing element in the store
+		 * @param {String} key
+		 * @param {Object} data
+		 * @return {Object} the updated element
+		 */
+		replace: async (key, data) => {
+			try {
+				const replaced = await client.query(
 					q.Select(
 						"data",
 						q.Replace(q.Ref(`classes/${domain}/${key}`), { data })
 					)
 				);
+				return Object.assign(replaced, { id: key });
 			} catch (err) {
 				if (err.name === "NotFound") {
 					// That's in fact a 404
@@ -95,10 +120,7 @@ const create = (domain, conf) => {
 				const player = await client.query(
 					q.Select("data", q.Get(q.Ref(`classes/${domain}/${key}`)))
 				);
-				return Object.assign(
-					player,
-					{ id: key }
-				)
+				return Object.assign(player, { id: key });
 			} catch (err) {
 				if (err.name === "NotFound") {
 					// That's in fact a 404
@@ -158,7 +180,10 @@ const create = (domain, conf) => {
 							q.Match(q.Ref(`indexes/all_${domain}`)),
 							options
 						),
-						(ref) => [q.Select("id", ref), q.Select("data", q.Get(ref))]
+						(ref) => [
+							q.Select("id", ref),
+							q.Select("data", q.Get(ref)),
+						]
 					)
 				);
 				// Rebuild the full id+data representation
@@ -189,6 +214,10 @@ const create = (domain, conf) => {
 			} catch (err) {}
 		},
 	};
+
+	// alias for a more convenient API
+	store.add = store.create;
+	store.update = store.set;
 
 	if (conf && typeof conf.validate === "function") {
 		const set = store.set;

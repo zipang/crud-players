@@ -11,6 +11,13 @@ const data = {
 
 describe("FAUNADB STORE", function() {
 
+	if (!process.env.FAUNADB_TEST_SECRET) {
+		console.log(`No environment variable found (FAUNADB_TEST_SECRET) !
+If you are lauching this test from the command line, you must first add the secret :
+> export FAUNADB_TEST_SECRET=xxxxxxxxxx`);
+		return;
+	}
+
 	// We need a unique domain name, because cleaning
 	// after tests needs 1mn to propagate in the cluster
 	// so, relaunching the tests to soon would throw an error..
@@ -52,9 +59,12 @@ describe("FAUNADB STORE", function() {
 	});
 
 	it("Can update an existing data", async function() {
-		const created  = await store.add(data.janeDoe);
-		const readback = await store.get(created.id);
-		expect(readback).to.equal(data.janeDoe);
+		const created = await store.add(data.janeDoe);
+		const updated = await store.set(created.id, {
+			birthDate: "1970-01-01"
+		});
+		expect(updated).to.contain(data.janeDoe);
+		expect(updated).to.contain({ id: created.id, birthDate: "1970-01-01" });
 		return;
 	});
 
