@@ -18,7 +18,7 @@ module.exports = async (req, resp) => {
 		if (!player) {
 			send(resp, 404, `Player #${playerId} was not found`);
 		} else {
-			return player;
+			send(resp, 200, player);
 		}
 
 	} catch (err) {

@@ -13,12 +13,12 @@ module.exports = async (req, resp) => {
 		playerId = parseUrl(req.url).pathname.split("/").pop();
 
 		// Retrieve the Player by its key
-		const result = await store.delete(playerId);
+		const deleted = await store.delete(playerId);
 
-		if (!result) {
+		if (!deleted) {
 			send(resp, 404, `Player #${playerId} was not found`);
 		} else {
-			return result;
+			send(resp, 200, deleted);
 		}
 
 	} catch (err) {

@@ -17,11 +17,12 @@ module.exports = async (req, resp) => {
 
 		// Retrieve the Player by its key
 		const player = await store.get(playerId);
+
 		if (!player) {
 			send(resp, 404, `Player ${playerId} was not found`);
 		} else {
 			const updated = await store.set(playerId, Object.assign(player, playerData));
-			return updated;
+			send(resp, 200, updated);
 		}
 
 	} catch (err) {
