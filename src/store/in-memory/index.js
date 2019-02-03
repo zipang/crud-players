@@ -12,7 +12,7 @@ module.exports = (domain, conf) => {
 		has: (key) => map.has(key),
 		create: (data) => {
 			data.id = (Date.now() + map.size).toString(32);
-			map.set(key, data);
+			map.set(data.id, data);
 			return data;
 		},
 		set: (key, data) => map.set(key, data),
