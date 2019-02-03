@@ -12,7 +12,8 @@ const FIND_OPTIONS = {
  * @param {Object} conf - configuration object to connect to the database
  * @return {Store}
  */
-const create = (domain, conf) => {
+module.exports = (domain, conf) => {
+
 	// Check the given configuration
 	if (!conf || !conf.secret) {
 		throw new Error(
@@ -58,7 +59,7 @@ const create = (domain, conf) => {
 				const result = await client.query(
 					q.Create(q.Class(domain), { data })
 				);
-				return Object.assign({ id: result.ref.id }, data);
+				return Object.assign(data, { id: result.ref.id });
 			} catch (err) {
 				throw new StorageError(domain, "create", data, err);
 			}
@@ -88,30 +89,6 @@ const create = (domain, conf) => {
 			}
 		},
 		/**
-		 * Replace an existing element in the store
-		 * @param {String} key
-		 * @param {Object} data
-		 * @return {Object} the updated element
-		 */
-		replace: async (key, data) => {
-			try {
-				const replaced = await client.query(
-					q.Select(
-						"data",
-						q.Replace(q.Ref(`classes/${domain}/${key}`), { data })
-					)
-				);
-				return Object.assign(replaced, { id: key });
-			} catch (err) {
-				if (err.name === "NotFound") {
-					// That's in fact a 404
-					return undefined;
-				} else {
-					throw new StorageError(domain, "update", data, err);
-				}
-			}
-		},
-		/**
 		 * Retrieve an element from the store
 		 * @param {String} key
 		 */
@@ -120,6 +97,7 @@ const create = (domain, conf) => {
 				const player = await client.query(
 					q.Select("data", q.Get(q.Ref(`classes/${domain}/${key}`)))
 				);
+				// the ref id is not stored inside the data...
 				return Object.assign(player, { id: key });
 			} catch (err) {
 				if (err.name === "NotFound") {
@@ -215,20 +193,5 @@ const create = (domain, conf) => {
 		},
 	};
 
-	// alias for a more convenient API
-	store.add = store.create;
-	store.update = store.set;
-
-	if (conf && typeof conf.validate === "function") {
-		const set = store.set;
-		const validate = conf.validate;
-		store.set = (key, data) => {
-			validate(data);
-			return set(key, data);
-		};
-	}
-
 	return store;
 };
-
-module.exports = { create };
