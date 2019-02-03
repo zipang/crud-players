@@ -29,7 +29,7 @@ module.exports = (domain, spec) => {
 	}
 	// Step 2. Create the store for the specific domain
 	try {
-		let storeInst = addValidatingLayer(
+		let store = addValidatingLayer(
 			storeAdapter(domain, conf),
 			validate
 		);
@@ -42,13 +42,13 @@ module.exports = (domain, spec) => {
 		if (typeof data === "object") {
 			// Add suplied data
 			Object.keys(data).forEach((key) => {
-				storeInst.set(key, data[key]);
+				store.set(key, data[key]);
 			});
 		}
-		return storeInst;
+		return store;
 	} catch (err) {
 		throw new StorageError(domain, "init", null,
-			`Initialisation of the ${store.db} data store failed :
+			`Initialisation of the ${db} data store failed :
 			${err.message}`
 		);
 	}
