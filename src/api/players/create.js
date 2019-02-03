@@ -1,5 +1,6 @@
 const store = require("../store")("players");
-const { json, send, sendError, createError } = require('micro');
+const { json, send } = require('micro');
+const { sendError } = require("../utils");
 const URL = require('url').URL;
 
 /**
@@ -24,12 +25,6 @@ module.exports = async (req, resp) => {
 		send(resp, 201, newPlayer);
 
 	} catch (err) {
-		if (err.statusCode) {
-			// a validation or storage error that allready has a statusCode
-			sendError(req, resp, err);
-		} else {
-			// Bad request
-			sendError(req, resp, createError(400, `Player creation failed : ${err.message}`, err));
-		}
+		sendError(resp, `Player creation failed`, err);
 	}
 };

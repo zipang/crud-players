@@ -1,5 +1,6 @@
 const store = require("../store")("players");
-const { json, send, sendError, createError } = require("micro");
+const { json, send } = require("micro");
+const { sendError } = require("../utils");
 const parseUrl = require("url").parse;
 
 /**
@@ -26,19 +27,6 @@ module.exports = async (req, resp) => {
 		}
 
 	} catch (err) {
-		if (err.statusCode) {
-			// a validation or storage error that allready has a statusCode
-			sendError(req, resp, err);
-		} else {
-			sendError(
-				req,
-				resp,
-				createError(
-					500,
-					`Update of Player ${playerId} failed : ${err.message}`,
-					err
-				)
-			);
-		}
+		sendError(resp, `Update of Player ${playerId} failed`, err);
 	}
 };
