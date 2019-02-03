@@ -11,6 +11,7 @@ module.exports = class ValidationError extends TypeError {
 		super(`${modelName}'s schema validation failed :
   - ` + errors.join("\n  - "));
 		this.data = data;
+		this.statusCode = 400; // Bad Request
 		this.errors = errors;
 	}
 }
