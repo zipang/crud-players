@@ -4,13 +4,43 @@ const createService = require("./create");
 const fetch = require("node-fetch");
 const { expect } = require("code");
 
-describe("CREATE API entry point", function() {
+describe("CREATE API entry point", async function() {
 
-	const service = micro(createService);
+	let service = micro(createService);
+	let testUrl;
 
-	it("Respond with a newly created object with an id on POST requests", async function() {
+	before(async function() {
+		testUrl = await listen(service);
+	});
+	after(async function() {
+		service.close();
+	});
 
-		const testUrl = await listen(service);
+	it("Respond with new newly created object", async function() {
+
+		const resp = await fetch(testUrl, {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				firstName: "John",
+				lastName: "DOE",
+				birthDate: "1970-01-01",
+				number: 8,
+				team: "St Louis",
+			}),
+		});
+
+		const body = await resp.json();
+
+		expect(body).to.contain(["id", "firstName", "lastName", "birthDate", "number", "team"]);
+		expect(resp.status).to.equal(201);
+		return;
+	});
+
+	it("Respond with an error if the posted object fails the validation rules", async function() {
 
 		const resp = await fetch(testUrl, {
 			method: "POST",
@@ -23,8 +53,9 @@ describe("CREATE API entry point", function() {
 			}),
 		});
 
-		console.dir(resp.body);
+		const body = await resp.json();
 
-		expect(resp.body).to.contain(["id", "firstName"]);
+		expect(body).to.contain(["error", "message", "data"]);
+		expect(resp.status).to.equal(400);
 	});
 });
