@@ -1,17 +1,20 @@
-require('now-env'); // Load the environment vaérs and secrets from now.json
+require("now-env"); // Load the environment vars and secrets from now.json
 const { send } = require("micro");
+const parseUrl = require("url").parse;
+
 /**
  * Route everything to the correct API endpoint
  * Launch it with `yarn dev:api`
  */
 module.exports = (req, resp) => {
-
-	const path = require('url').parse(req.url).pathname.split("/");
+	const path = parseUrl(req.url).pathname.split("/");
 
 	path.shift(); // the firsty path element is empty
 	const api = path.shift();
 	if (api !== "api") {
-		throw new Error("To call the local api, start your path with /api/domain/*")
+		throw new Error(
+			"To call the local api, start your path with /api/domain/*"
+		);
 	}
 	const domain = path.shift();
 	const param  = path.shift();
@@ -36,8 +39,7 @@ module.exports = (req, resp) => {
 			return require(`./${domain}/delete`)(req, resp);
 
 		default:
-			send(resp, 404, `Path not found : ${method} ${req.url}`)
+			send(resp, 404, `Path not found : ${method} ${req.url}`);
 			break;
 	}
-
-}
+};
